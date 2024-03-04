@@ -1,31 +1,20 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.views.generic import ListView, DetailView
+from .models import Recipe
 
-def recipe_list(request):
-    recipes = [
-        {"name": "Recipe 1", "link": "/recipe/1"},
-        {"name": "Recipe 2", "link": "/recipe/2"}
-    ]
-    return render(request, 'recipe_list.html', {'recipes': recipes})
+class RecipeListView(ListView):
+    model = Recipe
+    template_name = 'recipe_list.html'
+    context_object_name = 'recipes'
 
-def recipe_1(request):
-    ingredients = [
-        {"name": "tomato", "quantity": "3pcs"},
-        {"name": "onion", "quantity": "1pc"},
-        {"name": "pork", "quantity": "1kg"},
-        {"name": "water", "quantity": "1L"},
-        {"name": "sinigang mix", "quantity": "1 packet"}
-    ]
-    return render(request, 'recipe_detail.html', {'recipe_name': 'Recipe 1', 'ingredients': ingredients})
+class RecipeDetailView(DetailView):
+    model = Recipe
+    template_name = 'recipe_detail.html'
+    context_object_name = 'recipe'
 
-def recipe_2(request):
-    ingredients = [
-        {"name": "garlic", "quantity": "1 head"},
-        {"name": "onion", "quantity": "1pc"},
-        {"name": "vinegar", "quantity": "1/2cup"},
-        {"name": "water", "quantity": "1 cup"},
-        {"name": "salt", "quantity": "1 tablespoon"},
-        {"name": "whole black peppers", "quantity": "1 tablespoon"},
-        {"name": "pork", "quantity": "1 kilo"}
-    ]
-    return render(request, 'recipe_detail.html', {'recipe_name': 'Recipe 2', 'ingredients': ingredients})
+    def get_context_data(self, **kwargs):
+        print("get_context_data method is called")
+        context = super().get_context_data(**kwargs)
+        ingredients = self.object.ingredients.all()
+        print("Ingredients:", ingredients)  # print ingredients, debugging
+        context['recipe_ingredients'] = ingredients
+        return context
