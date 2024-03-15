@@ -1,0 +1,12 @@
+<!-- templates/_header.html -->
+<header>
+    <h1>Recipe Book</h1>
+    {% if user.is_authenticated %}
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    {% elif request.resolver_match.url_name != 'login' %}
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+</header>
